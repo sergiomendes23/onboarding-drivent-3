@@ -29,6 +29,9 @@ export async function getRoomsHotels(req: AuthenticatedRequest, res: Response) {
     if (error.name === "NotFoundError") {
       return res.status(httpStatus.NOT_FOUND).send(error);
     }
+    if (error.name === "UnauthorizedError") {
+      return res.status(httpStatus.UNAUTHORIZED).send(error);
+    }
     if (error.name === "invalidDataError") {
       return res.status(httpStatus.PAYMENT_REQUIRED).send(error);
     }
