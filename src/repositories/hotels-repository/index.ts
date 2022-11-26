@@ -4,7 +4,7 @@ function getHotelsRepository() {
   return prisma.hotel.findMany();
 }
 
-function getRoomsHotels(hotelId: number) {
+function getRoomsHotelsRepository(hotelId: number) {
   return prisma.room.findMany({
     where: {
       hotelId,
@@ -17,7 +17,7 @@ function getRoomsHotels(hotelId: number) {
 
 const hotelsRepository = {
   getHotelsRepository,
-  getRoomsHotels,
+  getRoomsHotelsRepository,
 };
 
 export default hotelsRepository;
