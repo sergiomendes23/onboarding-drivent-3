@@ -12,10 +12,10 @@ async function getHotelsService(userId: number): Promise<Hotel[]> {
     throw notFoundError();
   }
   if (!validTicket.TicketType.includesHotel) {
-    throw notFoundError();
+    throw unauthorizedError();
   }
   if (!validTicket.TicketType.isRemote) {
-    throw notFoundError();
+    throw unauthorizedError();
   }
   if (validTicket.status === "RESERVED") {
     throw invalidDataError;
