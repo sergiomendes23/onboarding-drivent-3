@@ -48,10 +48,10 @@ describe("GET /hotels", () => {
 
   describe("when token is valid", () => {
     it("should respond with status 401 when there is no enrollment to user", async () => {
-      const token = await generateValidToken();
+      const token = generateValidToken();
       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
 
-      expect(response.status).toEqual(httpStatus.UNAUTHORIZED);
+      expect(response.status).toBe(httpStatus.UNAUTHORIZED);
     });
     it("should respond with status 404 when user doesnt have valid ticket", async () => {
       const user = await createUser();
@@ -71,7 +71,7 @@ describe("GET /hotels", () => {
       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(httpStatus.UNAUTHORIZED);
     });
-    it("should respond with status 402 when the ticket is not paid", async () => {
+    it("should respond with status 401 when the ticket is not paid", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
@@ -79,9 +79,9 @@ describe("GET /hotels", () => {
       await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
 
       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
-      expect(response.status).toBe(httpStatus.PAYMENT_REQUIRED);
+      expect(response.status).toBe(httpStatus.UNAUTHORIZED);
     });
-    describe("when ticket is paid", async () => {
+    describe("when ticket is paid", () => {
       it("should respond with status 200 and empty array when there are no hotels", async () => {
         const user = await createUser();
         const token = await generateValidToken(user);
@@ -102,6 +102,7 @@ describe("GET /hotels", () => {
         await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
         const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
+
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toEqual([
           {
