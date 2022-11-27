@@ -90,6 +90,7 @@ describe("GET /hotels", () => {
         await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
         const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
+
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toEqual([]);
       });
@@ -106,7 +107,6 @@ describe("GET /hotels", () => {
         expect(response.status).toBe(httpStatus.OK);
         expect(response.body).toEqual([
           {
-            id: hotel.id,
             name: hotel.name,
             image: hotel.image,
             createdAt: hotel.createdAt.toISOString(),

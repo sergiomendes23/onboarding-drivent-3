@@ -38,6 +38,5 @@ export async function getRoomsHotels(req: AuthenticatedRequest, res: Response) {
     if (error.name === "invalidDataError") {
       return res.status(httpStatus.BAD_REQUEST).send(error);
     }
-    console.log(error);
   }
 }
