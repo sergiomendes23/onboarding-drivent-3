@@ -11,10 +11,10 @@ async function getHotelsService(userId: number): Promise<Hotel[]> {
   if (!validTicket || !user) {
     throw notFoundError();
   }
-  if (validTicket.TicketType.includesHotel === true) {
+  if (!validTicket.TicketType.includesHotel) {
     throw unauthorizedError();
   }
-  if (validTicket.TicketType.isRemote === false) {
+  if (validTicket.TicketType.isRemote) {
     throw unauthorizedError();
   }
   if (validTicket.status === TicketStatus.RESERVED) {
@@ -37,31 +37,25 @@ async function verifyUser(userId: number) {
 async function getRoomsHotelsService(userId: number, hotelId: string) {
   const user = await verifyUser(userId);
   const validTicket = await ticketRepository.findTicketByEnrollmentId(user);
-  const validHotelId = Number(hotelId);
+  const validHotel = await hotelsRepository.getRoomsHotelsRepository(Number(hotelId));
 
-  if (!validTicket) {
+  if (!validTicket || !user) {
     throw notFoundError();
   }
   if (!validTicket.TicketType.includesHotel) {
     throw unauthorizedError();
   }
-  if (!validTicket.TicketType.isRemote) {
+  if (validTicket.TicketType.isRemote) {
     throw unauthorizedError();
   }
   if (validTicket.status === TicketStatus.RESERVED) {
     throw invalidDataError;
   }
-  if (!validHotelId) {
+  if (!validHotel) {
     throw notFoundError();
   }
 
-  const roomsHotels = await hotelsRepository.getRoomsHotelsRepository(validHotelId);
-
-  if (roomsHotels.length === 0) {
-    throw notFoundError();
-  }
-
-  return roomsHotels;
+  return validHotel;
 }
 
 const hotelsService = {

@@ -4,6 +4,7 @@ import { prisma } from "@/config";
 export async function hotelCreate() {
   return prisma.hotel.create({
     data: {
+      id: faker.datatype.number(),
       name: faker.name.findName(),
       image: faker.internet.url(),
       updatedAt: new Date(),
@@ -14,9 +15,9 @@ export async function hotelCreate() {
 export async function roomHotelCreate(hotelId: number) {
   return prisma.room.create({
     data: {
-      id: faker.datatype.number({ min: 1, max: 100 }),
+      id: faker.datatype.number(),
       name: faker.name.findName(),
-      capacity: faker.datatype.number({ min: 1, max: 10 }),
+      capacity: faker.datatype.number(),
       hotelId,
       updatedAt: new Date(),
     }
