@@ -5,9 +5,9 @@ import httpStatus from "http-status";
 import { Hotel } from "@prisma/client";
 
 export async function getHotels(req: AuthenticatedRequest, res: Response) {
-  const { userId } = req;
+  const { userId } = req as AuthenticatedRequest;
   try {
-    const hotels: Hotel[] = await hotelsService.getHotelsService(userId);
+    const hotels = await hotelsService.getHotelsService(userId);
     return res.status(httpStatus.OK).send(hotels);
   } catch (error) {
     if (error.name === "NotFoundError") {

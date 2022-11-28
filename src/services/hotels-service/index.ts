@@ -1,6 +1,6 @@
 import hotelsRepository from "@/repositories/hotels-repository";
 import enrollmentRepository from "@/repositories/enrollment-repository";
-import { Hotel } from "@prisma/client";
+import { Hotel, TicketStatus } from "@prisma/client";
 import { invalidDataError, notFoundError, unauthorizedError } from "@/errors";
 import ticketRepository from "@/repositories/ticket-repository";
 
@@ -8,20 +8,20 @@ async function getHotelsService(userId: number): Promise<Hotel[]> {
   const user = await verifyUser(userId);
   const validTicket = await ticketRepository.findTicketByEnrollmentId(user);
 
-  if (!validTicket) {
+  if (!validTicket || !user) {
     throw notFoundError();
   }
-  if (!validTicket.TicketType.includesHotel) {
+  if (validTicket.TicketType.includesHotel === true) {
     throw unauthorizedError();
   }
-  if (!validTicket.TicketType.isRemote) {
+  if (validTicket.TicketType.isRemote === false) {
     throw unauthorizedError();
   }
-  if (validTicket.status === "RESERVED") {
+  if (validTicket.status === TicketStatus.RESERVED) {
     throw invalidDataError;
   }
 
-  return hotelsRepository.getHotelsRepository();
+  return await hotelsRepository.getHotelsRepository();
 }
 
 async function verifyUser(userId: number) {
@@ -48,7 +48,7 @@ async function getRoomsHotelsService(userId: number, hotelId: string) {
   if (!validTicket.TicketType.isRemote) {
     throw unauthorizedError();
   }
-  if (validTicket.status === "RESERVED") {
+  if (validTicket.status === TicketStatus.RESERVED) {
     throw invalidDataError;
   }
   if (!validHotelId) {
