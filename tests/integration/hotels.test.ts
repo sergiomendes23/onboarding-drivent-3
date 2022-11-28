@@ -6,12 +6,12 @@ import * as jwt from "jsonwebtoken";
 import supertest from "supertest";
 import {
   createEnrollmentWithAddress,
-  hotelCreate,
+  hotelCreated,
   createTicket,
   createUser,
   ticketPassHotels,
   ticketNotPassHotels,
-  roomHotelCreate,
+  roomHotelCreated,
 } from "../factories";
 import { cleanDb, generateValidToken } from "../helpers";
 
@@ -100,7 +100,7 @@ describe("GET /hotels", () => {
         const token = await generateValidToken(user);
         const enrollment = await createEnrollmentWithAddress(user);
         const ticketType = await ticketPassHotels();
-        await hotelCreate();
+        await hotelCreated();
         await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
 
         const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
@@ -144,7 +144,7 @@ describe("GET /hotels/:hotelId", () => {
   describe("when token is valid", () => {
     it("should respond with status 401 when there is no enrollment to user", async () => {
       const token = generateValidToken();
-      const hotel = await hotelCreate();
+      const hotel = await hotelCreated();
       const id = hotel.id;
       const response = await server.get(`/hotels/${id}`).set("Authorization", `Bearer ${token}`);
 
@@ -153,7 +153,7 @@ describe("GET /hotels/:hotelId", () => {
     it("should respond with status 404 when user doesnt have valid ticket", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
-      const hotel = await hotelCreate();
+      const hotel = await hotelCreated();
       const id = hotel.id;
       await createEnrollmentWithAddress(user);
 
@@ -165,7 +165,7 @@ describe("GET /hotels/:hotelId", () => {
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await ticketNotPassHotels();
-      const hotel = await hotelCreate();
+      const hotel = await hotelCreated();
       const id = hotel.id;
       await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
 
@@ -177,7 +177,7 @@ describe("GET /hotels/:hotelId", () => {
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await ticketPassHotels();
-      const hotel = await hotelCreate();
+      const hotel = await hotelCreated();
       const id = hotel.id;
       await createTicket(enrollment.id, ticketType.id, TicketStatus.RESERVED);
 
@@ -189,10 +189,10 @@ describe("GET /hotels/:hotelId", () => {
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
       const ticketType = await ticketPassHotels();
-      const hotel = await hotelCreate();
+      const hotel = await hotelCreated();
       const id = hotel.id;
       await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-      await roomHotelCreate(hotel.id);
+      await roomHotelCreated(hotel.id);
 
       const response = await server.get(`/hotels/${id}`).set("Authorization", `Bearer ${token}`);
       expect(response.status).toBe(httpStatus.OK);
@@ -204,7 +204,7 @@ describe("GET /hotels/:hotelId", () => {
         const enrollment = await createEnrollmentWithAddress(user);
         const ticketType = await ticketPassHotels();
         await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-        const hotel = await hotelCreate();
+        const hotel = await hotelCreated();
         const id = hotel.id;
 
         const response = await server.get(`/hotels/${id}`).set("Authorization", `Bearer ${token}`);
@@ -225,10 +225,10 @@ describe("GET /hotels/:hotelId", () => {
         const token = await generateValidToken(user);
         const enrollment = await createEnrollmentWithAddress(user);
         const ticketType = await ticketPassHotels();
-        const hotel = await hotelCreate();
+        const hotel = await hotelCreated();
         const id = hotel.id;
         await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-        await roomHotelCreate(hotel.id);
+        await roomHotelCreated(hotel.id);
 
         const response = await server.get(`/hotels/${id}`).set("Authorization", `Bearer ${token}`);
 
